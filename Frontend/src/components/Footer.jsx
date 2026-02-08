@@ -48,11 +48,6 @@ const Footer = () => {
 
                 <div className="footer-bottom">
                     <p>© 2026 Collexa. All rights reserved.</p>
-                    <div className="footer-bottom-links">
-                        <a href="#">Privacy</a>
-                        <a href="#">Terms</a>
-                        <a href="#">Help</a>
-                    </div>
                 </div>
             </div>
         </footer>
