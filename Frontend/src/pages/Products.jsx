@@ -7,6 +7,7 @@ import './Products.css';
 const Products = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showFilters, setShowFilters] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [filters, setFilters] = useState({
@@ -61,7 +62,7 @@ const Products = () => {
 
     return (
         <div className="products-page">
-            <aside className="filters-sidebar">
+            <aside className={`filters-sidebar ${showFilters ? 'show' : ''}`}>
                 <div className="filters-header">
                     <h3>Filters</h3>
                     <button onClick={clearFilters} className="clear-btn">Clear All</button>
@@ -139,8 +140,19 @@ const Products = () => {
 
             <main className="products-main">
                 <div className="products-header">
-                    <h1>Trending on Collexa</h1>
-                    <p>{products.length} items found</p>
+                    <div className="products-header-left">
+                        <h1>Trending on Collexa</h1>
+                       
+                    </div>
+                    <button
+                        className="filter-toggle-btn"
+                        onClick={() => setShowFilters(!showFilters)}
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
+                        </svg>
+                        {showFilters ? 'Hide' : 'Filters'}
+                    </button>
                 </div>
 
                 {loading ? (

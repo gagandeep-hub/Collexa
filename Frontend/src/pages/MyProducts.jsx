@@ -58,7 +58,7 @@ const MyProducts = () => {
             <div className="my-products-header">
                 <div>
                     <h1>My Listings</h1>
-                    <p>{products.length} items listed</p>
+                   
                 </div>
                 <Link to="/add-product" className="add-new-btn">
                     + Add New Listing

@@ -53,6 +53,12 @@ const ProductDetail = () => {
 
     return (
         <div className="product-detail-page">
+            <button className="back-btn" onClick={() => navigate(-1)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back
+            </button>
             <div className="product-detail-container">
                 <div className="product-images">
                     {product.images?.[0] ? (

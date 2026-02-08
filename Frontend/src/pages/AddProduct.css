@@ -16,6 +16,33 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+}
+
+.back-btn:hover {
+    color: #0F766E;
+}
+
+.back-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.back-btn:hover svg {
+    transform: translateX(-3px);
+}
+
 .add-product-container h1 {
     color: #111827;
     font-size: 1.8rem;
