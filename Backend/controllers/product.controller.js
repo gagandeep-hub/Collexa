@@ -1,4 +1,5 @@
 const Product = require('../models/Product.model');
+const { uploadMultipleToCloudinary } = require('../utils/cloudinaryUpload');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -91,9 +92,10 @@ exports.createProduct = async (req, res) => {
     try {
         req.body.seller = req.user.id;
 
-        // Handle uploaded images
+        // Handle uploaded images - upload to Cloudinary
         if (req.files && req.files.length > 0) {
-            req.body.images = req.files.map(file => `/uploads/${file.filename}`);
+            const imageUrls = await uploadMultipleToCloudinary(req.files);
+            req.body.images = imageUrls;
         }
 
         const product = await Product.create(req.body);
@@ -137,7 +139,7 @@ exports.updateProduct = async (req, res) => {
         // Handle images
         let images = [];
 
-        // Keep existing images if specified
+        // Keep existing images if specified (these are already Cloudinary URLs)
         if (req.body.existingImages) {
             const existing = Array.isArray(req.body.existingImages)
                 ? req.body.existingImages
@@ -145,10 +147,10 @@ exports.updateProduct = async (req, res) => {
             images = [...existing];
         }
 
-        // Add new uploaded images
+        // Add new uploaded images - upload to Cloudinary
         if (req.files && req.files.length > 0) {
-            const newImages = req.files.map(file => `/uploads/${file.filename}`);
-            images = [...images, ...newImages];
+            const newImageUrls = await uploadMultipleToCloudinary(req.files);
+            images = [...images, ...newImageUrls];
         }
 
         // Only update images if we have any
