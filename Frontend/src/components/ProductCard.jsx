@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://collexa-backend-c7cu.onrender.com';
 
 const ProductCard = ({ product }) => {
     const conditionColors = {

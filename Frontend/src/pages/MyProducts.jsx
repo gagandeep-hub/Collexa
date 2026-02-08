@@ -4,7 +4,7 @@ import { productAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import './MyProducts.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://collexa-backend-c7cu.onrender.com';
 
 const MyProducts = () => {
     const [products, setProducts] = useState([]);

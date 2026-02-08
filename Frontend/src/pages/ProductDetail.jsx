@@ -4,7 +4,7 @@ import { productAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './ProductDetail.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://collexa-backend-c7cu.onrender.com';
 
 const ProductDetail = () => {
     const { id } = useParams();
