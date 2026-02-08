@@ -1,0 +1,273 @@
+.navbar {
+    background: #fff;
+    padding: 0.8rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand:hover {
+    opacity: 0.9;
+}
+
+.brand-text {
+    color: #0F766E;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.5px;
+}
+
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.hamburger {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #374151;
+    border-radius: 2px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.hamburger::before,
+.hamburger::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 2px;
+    background: #374151;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger::before {
+    top: -7px;
+}
+
+.hamburger::after {
+    top: 7px;
+}
+
+.hamburger.active {
+    background: transparent;
+}
+
+.hamburger.active::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+
+.hamburger.active::after {
+    transform: rotate(-45deg);
+    top: 0;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Professional nav link style like OLX */
+.nav-link {
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #0F766E;
+    background: #F3FAF7;
+}
+
+/* Auth buttons - Professional minimal style */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid #e5e7eb;
+}
+
+.btn-login {
+    color: #374151;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.btn-login:hover {
+    color: #0F766E;
+    background: #F3FAF7;
+}
+
+.btn-register {
+    background: #0F766E;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+}
+
+.btn-register:hover {
+    background: #0d6d66;
+}
+
+/* User menu - Professional style */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid #e5e7eb;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background: #0F766E;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.user-name {
+    color: #374151;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.btn-logout {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.btn-logout:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .navbar-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 0;
+        padding: 5rem 1.5rem 2rem;
+        transition: all 0.3s ease;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-links.active {
+        right: 0;
+    }
+
+    .nav-link {
+        padding: 1rem;
+        border-radius: 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+        gap: 0.5rem;
+    }
+
+    .btn-login,
+    .btn-register {
+        text-align: center;
+        width: 100%;
+        padding: 0.8rem;
+    }
+
+    .user-menu {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8rem;
+        padding: 1rem 0;
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        margin-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .user-name {
+        text-align: center;
+    }
+
+    .btn-logout {
+        width: 100%;
+        padding: 0.8rem;
+    }
+}

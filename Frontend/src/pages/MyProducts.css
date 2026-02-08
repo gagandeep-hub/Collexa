@@ -1,0 +1,244 @@
+.my-products-page {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+    background: #f9fafb;
+}
+
+.my-products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.my-products-header h1 {
+    color: #111827;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.my-products-header p {
+    color: #6b7280;
+}
+
+.add-new-btn {
+    background: #0F766E;
+    color: #fff;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.add-new-btn:hover {
+    background: #0d6d66;
+}
+
+.no-listings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    text-align: center;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.no-listings span {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.no-listings h3 {
+    color: #111827;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.no-listings p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+.start-selling-btn {
+    background: #0F766E;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.my-products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.my-product-card {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.my-product-card:hover {
+    border-color: #0F766E;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.product-thumb {
+    width: 70px;
+    height: 70px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.product-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-thumb span {
+    font-size: 1.5rem;
+    opacity: 0.3;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-details h3 {
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.product-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.3rem;
+}
+
+.product-meta .category {
+    color: #6b7280;
+    text-transform: capitalize;
+    font-size: 0.85rem;
+}
+
+.product-meta .status {
+    text-transform: capitalize;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.product-details .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0F766E;
+}
+
+.product-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.btn-view,
+.btn-edit,
+.btn-delete {
+    flex: 1;
+    padding: 0.6rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-view {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.btn-view:hover {
+    background: #059669;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(5, 150, 105, 0.1);
+}
+
+.btn-edit {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.btn-edit:hover {
+    background: #2563eb;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1);
+}
+
+.btn-delete {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.1);
+}
+
+@media (max-width: 640px) {
+    .my-products-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .my-product-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .product-actions {
+        width: 100%;
+    }
+
+    .btn-view,
+    .btn-delete {
+        flex: 1;
+    }
+}

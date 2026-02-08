@@ -1,0 +1,154 @@
+.products-page {
+    display: flex;
+    min-height: calc(100vh - 80px);
+    gap: 2rem;
+    padding: 2rem;
+    background: #f9fafb;
+}
+
+/* Filters Sidebar */
+.filters-sidebar {
+    width: 260px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: fit-content;
+    position: sticky;
+    top: 80px;
+    border: 1px solid #e5e7eb;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.filters-header h3 {
+    color: #111827;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.clear-btn {
+    background: transparent;
+    color: #0F766E;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.clear-btn:hover {
+    color: #0d6d66;
+}
+
+.filter-group {
+    margin-bottom: 1.2rem;
+}
+
+.filter-group label {
+    color: #374151;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.7rem 0.8rem;
+    color: #111827;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #0F766E;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+
+.filter-group select option {
+    background: #fff;
+}
+
+.price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-inputs input {
+    flex: 1;
+}
+
+.price-inputs span {
+    color: #9ca3af;
+}
+
+/* Products Main */
+.products-main {
+    flex: 1;
+}
+
+.products-header {
+    margin-bottom: 1.5rem;
+}
+
+.products-header h1 {
+    color: #111827;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.products-header p {
+    color: #6b7280;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.2rem;
+}
+
+.loading,
+.no-products {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #6b7280;
+}
+
+.no-products span {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.no-products h3 {
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .products-page {
+        flex-direction: column;
+    }
+
+    .filters-sidebar {
+        width: 100%;
+        position: static;
+    }
+}
