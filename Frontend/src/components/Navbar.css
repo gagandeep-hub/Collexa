@@ -252,9 +252,9 @@
 
     .user-menu {
         flex-direction: column;
-        align-items: stretch;
-        gap: 0.8rem;
-        padding: 1rem 0;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem 0;
         margin-left: 0;
         padding-left: 0;
         border-left: none;
@@ -262,8 +262,16 @@
         border-top: 1px solid #e5e7eb;
     }
 
+    .user-menu .user-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+    }
+
     .user-name {
         text-align: center;
+        font-size: 1rem;
+        margin-top: -0.5rem;
     }
 
     .btn-logout {
