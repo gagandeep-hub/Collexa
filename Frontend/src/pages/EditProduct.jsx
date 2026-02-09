@@ -300,9 +300,20 @@ const EditProduct = () => {
                         </div>
                     </div>
 
+                    <div className="form-group">
+                        <label htmlFor="location">Pickup Location</label>
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            placeholder="e.g., Gole ka Mandir, Near College Gate"
+                        />
+                        <small className="field-hint">Help buyers know if the item is nearby</small>
+                    </div>
+
                     <div className="form-row">
-
-
                         <div className="form-group">
                             <label htmlFor="status">Status</label>
                             <select

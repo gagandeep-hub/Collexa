@@ -4,6 +4,57 @@
     display: flex;
     justify-content: center;
     background: #f9fafb;
+    position: relative;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.loading-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e5e7eb;
+    border-top-color: #0F766E;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-content p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.loading-hint {
+    font-size: 0.9rem;
+    color: #6b7280;
 }
 
 .add-product-container {
@@ -184,6 +235,12 @@
 
 .remove-btn:hover {
     background: #dc2626;
+}
+
+.field-hint {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
 }
 
 .submit-btn {

@@ -80,6 +80,15 @@ const AddProduct = () => {
 
     return (
         <div className="add-product-page">
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-content">
+                        <div className="spinner"></div>
+                        <p>Creating your listing...</p>
+                        <span className="loading-hint">Uploading images may take a moment</span>
+                    </div>
+                </div>
+            )}
             <div className="add-product-container">
                 <h1>Sell Your Item</h1>
                 <p className="subtitle">List your items and find buyers on campus</p>
@@ -217,6 +226,19 @@ const AddProduct = () => {
                                 <option value="poor">Poor</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="location">Posted in</label>
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            placeholder="e.g., Gole ka Mandir, Near College Gate"
+                        />
+                        <small className="field-hint">Help buyers know if the item is nearby</small>
                     </div>
 
                     <button type="submit" className="submit-btn" disabled={loading}>

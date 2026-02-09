@@ -51,6 +51,15 @@ const ProductCard = ({ product }) => {
                 <p className="product-seller">
                     {product.seller?.name || 'Unknown'}
                 </p>
+                {product.location && (
+                    <p className="product-location">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        {product.location}
+                    </p>
+                )}
             </div>
         </Link>
     );
