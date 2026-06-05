@@ -1,0 +1,132 @@
+/* ─── Complete Profile Page ──────────────────────────────────────────────────── */
+.complete-profile-page {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0fdfa 0%, #f9fafb 100%);
+}
+
+.complete-profile-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    animation: slideUp 0.35s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Icon ───────────────────────────────────────────────────────────────────── */
+.cp-icon {
+    width: 64px;
+    height: 64px;
+    background: #f0fdfa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem;
+    color: #0F766E;
+}
+
+/* ─── Headings ───────────────────────────────────────────────────────────────── */
+.complete-profile-card h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.cp-subtitle {
+    color: #6b7280;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+/* ─── Form ───────────────────────────────────────────────────────────────────── */
+.cp-form {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.cp-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.cp-form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.cp-form-group input {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    color: #111827;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cp-form-group input:focus {
+    outline: none;
+    border-color: #0F766E;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+
+/* ─── Submit Button ──────────────────────────────────────────────────────────── */
+.cp-submit-btn {
+    background: #0F766E;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 0.5rem;
+}
+
+.cp-submit-btn:hover:not(:disabled) {
+    background: #0d6d66;
+    transform: translateY(-1px);
+}
+
+.cp-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ─── Skip Note ──────────────────────────────────────────────────────────────── */
+.cp-skip-note {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .complete-profile-card {
+        padding: 1.75rem;
+    }
+    .complete-profile-card h1 {
+        font-size: 1.5rem;
+    }
+}
