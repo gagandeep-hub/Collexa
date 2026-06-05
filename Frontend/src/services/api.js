@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'https://collexa-backend-c7cu.onrender.com/api';
+// Automatically use localhost during development, and the Render URL in production.
+// You don't need to manually change this before deploying anymore!
+const API_URL = import.meta.env.VITE_API_URL ||
+    (import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://collexa-backend-c7cu.onrender.com/api');
 
 const api = axios.create({
     baseURL: API_URL,
@@ -9,7 +12,7 @@ const api = axios.create({
     }
 });
 
-// Add token to requests
+// Attach JWT to every outgoing request (if one exists in localStorage)
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -18,14 +21,29 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Auth APIs
+// ─── Auth APIs ────────────────────────────────────────────────────────────────
 export const authAPI = {
     register: (data) => api.post('/auth/register', data),
     login: (data) => api.post('/auth/login', data),
+    /**
+     * Sends the raw Google ID token (credential) returned by the Google popup
+     * to the backend for verification and upsert.
+     * Returns the same {token, user} shape as login/register.
+     */
+    googleAuth: (credential) => api.post('/auth/google', { credential }),
     getMe: () => api.get('/auth/me')
 };
 
-// Product APIs
+// ─── Profile APIs ─────────────────────────────────────────────────────────────
+export const profileAPI = {
+    // Feature 2: Edit Profile
+    getProfile: () => api.get('/profile'),
+    updateProfile: (data) => api.put('/profile', data),
+    // Feature 1: Profile Completion (onboarding)
+    completeProfile: (data) => api.put('/profile/complete', data)
+};
+
+// ─── Product APIs ─────────────────────────────────────────────────────────────
 export const productAPI = {
     getAll: (params) => api.get('/products', { params }),
     getOne: (id) => api.get(`/products/${id}`),

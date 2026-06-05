@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
@@ -35,6 +36,11 @@ const Register = () => {
         }
     };
 
+    // Called by GoogleLoginButton after a successful Google sign-up/sign-in
+    const handleGoogleSuccess = () => {
+        navigate('/');
+    };
+
     return (
         <div className="auth-page">
             <div className="auth-container">
@@ -43,6 +49,15 @@ const Register = () => {
                     <p>Join the Collexa today</p>
                 </div>
 
+                {/* ─── Google OAuth — shown first to encourage easier sign-up ─── */}
+                <GoogleLoginButton onSuccess={handleGoogleSuccess} />
+
+                {/* ─── Divider ──────────────────────────────────────────────── */}
+                <div className="auth-divider">
+                    <span>or sign up with email</span>
+                </div>
+
+                {/* ─── Email / Password Form ─────────────────────────────── */}
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
                         <label htmlFor="name">Full Name</label>

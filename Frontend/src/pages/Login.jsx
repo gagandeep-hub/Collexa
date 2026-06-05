@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
@@ -14,6 +15,7 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Navigate to the page the user tried to access before being redirected to login
     const from = location.state?.from?.pathname || '/';
 
     const handleChange = (e) => {
@@ -35,14 +37,20 @@ const Login = () => {
         }
     };
 
+    // Called by GoogleLoginButton after a successful Google login
+    const handleGoogleSuccess = () => {
+        navigate(from, { replace: true });
+    };
+
     return (
         <div className="auth-page">
             <div className="auth-container">
                 <div className="auth-header">
-                    <h1>Welcome Back! </h1>
+                    <h1>Welcome Back!</h1>
                     <p>Login to continue buying and selling</p>
                 </div>
 
+                {/* ─── Email / Password Form ─────────────────────────────── */}
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
@@ -74,6 +82,14 @@ const Login = () => {
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
+
+                {/* ─── Divider ──────────────────────────────────────────────── */}
+                <div className="auth-divider">
+                    <span>or</span>
+                </div>
+
+                {/* ─── Google OAuth ─────────────────────────────────────────── */}
+                <GoogleLoginButton onSuccess={handleGoogleSuccess} />
 
                 <p className="auth-footer">
                     Don't have an account? <Link to="/register">Sign Up</Link>

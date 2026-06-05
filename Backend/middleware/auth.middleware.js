@@ -50,3 +50,16 @@ exports.admin = (req, res, next) => {
     }
     next();
 };
+
+// Profile completion middleware
+exports.checkProfileCompletion = (req, res, next) => {
+    // Requires protect middleware to be run first so req.user exists
+    if (!req.user || !req.user.profileCompleted) {
+        return res.status(403).json({
+            success: false,
+            message: 'Please complete your profile first.',
+            isProfileIncomplete: true
+        });
+    }
+    next();
+};

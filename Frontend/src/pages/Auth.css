@@ -1,3 +1,4 @@
+/* ─── Auth Page Layout ─────────────────────────────────────────────────────── */
 .auth-page {
     min-height: calc(100vh - 80px);
     display: flex;
@@ -17,6 +18,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* ─── Header ───────────────────────────────────────────────────────────────── */
 .auth-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -34,6 +36,7 @@
     font-size: 0.95rem;
 }
 
+/* ─── Form ─────────────────────────────────────────────────────────────────── */
 .auth-form {
     display: flex;
     flex-direction: column;
@@ -76,6 +79,7 @@
     color: #9ca3af;
 }
 
+/* ─── Primary Button ───────────────────────────────────────────────────────── */
 .auth-btn {
     background: #0F766E;
     color: #fff;
@@ -98,6 +102,87 @@
     cursor: not-allowed;
 }
 
+/* ─── OR Divider ───────────────────────────────────────────────────────────── */
+/*
+ * The divider visually separates the two auth methods.
+ * Uses a CSS trick: two flex-growing lines flank the text,
+ * which stays centered regardless of its length.
+ */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.auth-divider span {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-transform: lowercase;
+}
+
+/* ─── Google Login Wrapper ─────────────────────────────────────────────────── */
+/*
+ * @react-oauth/google renders its own iframe-based button inside a div.
+ * We center it and ensure it fills the available width.
+ * The `google-login-wrapper` class targets our container div.
+ */
+.google-login-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Forces Google's button iframe to fill the container width */
+.google-login-wrapper > div,
+.google-login-wrapper iframe {
+    width: 100% !important;
+}
+
+/* ─── Custom Google Button (loading state) ─────────────────────────────────── */
+.google-btn--loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    color: #3c4043;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Loading spinner animation */
+.google-btn__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #dadce0;
+    border-top-color: #0F766E;
+    border-radius: 50%;
+    animation: google-spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes google-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Footer Link ──────────────────────────────────────────────────────────── */
 .auth-footer {
     text-align: center;
     margin-top: 1.5rem;
@@ -116,6 +201,7 @@
     color: #0d6d66;
 }
 
+/* ─── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
     .auth-container {
         padding: 1.5rem;

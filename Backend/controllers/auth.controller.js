@@ -1,137 +1,104 @@
-const User = require('../models/User.model');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const authService = require('../services/auth.service');
 
-// Generate JWT Token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE || '7d'
-    });
+/**
+ * Centralized error response formatter.
+ * Operational errors (AppError instances) expose their message to the client.
+ * Programming/unexpected errors show a generic message to avoid leaking internals.
+ */
+const sendErrorResponse = (res, error, fallbackMessage) => {
+    const response = {
+        success: false,
+        message: error.isOperational ? error.message : fallbackMessage
+    };
+
+    if (!error.isOperational) {
+        response.error = error.message;
+    }
+
+    return res.status(error.statusCode || 500).json(response);
 };
 
-// @desc    Register user
+// @desc    Register user with email & password
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, phone, college } = req.body;
+        const { token, user } = await authService.register(req.body);
 
-        // Check if user exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: 'User already exists with this email'
-            });
-        }
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Create user
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            phone,
-            college
-        });
-
-        // Generate token
-        const token = generateToken(user._id);
-
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             message: 'User registered successfully',
             token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                college: user.college
-            }
+            user
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error registering user',
-            error: error.message
-        });
+        return sendErrorResponse(res, error, 'Error registering user');
     }
 };
 
-// @desc    Login user
+// @desc    Login user with email & password
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { token, user } = await authService.login(req.body);
 
-        // Validate input
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide email and password'
-            });
-        }
-
-        // Check for user
-        const user = await User.findOne({ email }).select('+password');
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Check password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Generate token
-        const token = generateToken(user._id);
-
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: 'Login successful',
             token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                college: user.college
-            }
+            user
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error logging in',
-            error: error.message
-        });
+        return sendErrorResponse(res, error, 'Error logging in');
     }
 };
 
-// @desc    Get current user
+// @desc    Authenticate or register user via Google OAuth
+// @route   POST /api/auth/google
+// @access  Public
+//
+// How it works:
+//  - Frontend sends the raw Google ID token (credential) from the Google popup
+//  - This controller passes it to the service layer for verification & upsert
+//  - Returns the same {token, user} shape as regular login/register
+//  - The client stores the JWT in localStorage and proceeds normally
+exports.googleAuth = async (req, res) => {
+    try {
+        const { credential } = req.body;
+
+        if (!credential) {
+            return res.status(400).json({
+                success: false,
+                message: 'Google credential token is required'
+            });
+        }
+
+        const { token, user } = await authService.googleAuth(credential);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Google authentication successful',
+            token,
+            user
+        });
+    } catch (error) {
+        return sendErrorResponse(res, error, 'Error authenticating with Google');
+    }
+};
+
+// @desc    Get current logged-in user
 // @route   GET /api/auth/me
 // @access  Private
 exports.getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
-        res.status(200).json({
+        const user = await authService.getCurrentUser(req.user.id);
+
+        return res.status(200).json({
             success: true,
             user
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching user',
-            error: error.message
-        });
+        return sendErrorResponse(res, error, 'Error fetching user');
     }
 };

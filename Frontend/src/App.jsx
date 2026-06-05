@@ -14,6 +14,8 @@ import HowItWorks from './pages/HowItWorks'
 import SafetyTips from './pages/SafetyTips'
 import Contact from './pages/Contact'
 import FAQs from './pages/FAQs'
+import Profile from './pages/Profile'
+import CompleteProfile from './pages/CompleteProfile'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -34,6 +36,16 @@ function App() {
             <Route path="/products/:id" element={
               <ProtectedRoute>
                 <ProductDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/complete-profile" element={
+              <ProtectedRoute>
+                <CompleteProfile />
               </ProtectedRoute>
             } />
             <Route path="/add-product" element={

@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { productAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import './AddProduct.css';
 
 const AddProduct = () => {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState([]);
@@ -18,6 +20,11 @@ const AddProduct = () => {
         condition: '',
         location: ''
     });
+
+    // Enforce profile completion. If incomplete, send to the dedicated onboarding page.
+    if (user && !user.profileCompleted) {
+        return <Navigate to="/complete-profile" state={{ message: 'Please complete your profile before creating a listing.' }} replace />;
+    }
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
