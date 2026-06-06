@@ -98,7 +98,8 @@ export const AuthProvider = ({ children }) => {
         loginWithGoogle,
         logout,
         updateUserContext,
-        isAuthenticated: !!user
+        isAuthenticated: !!user,
+        isAdmin: user?.role === 'admin'
     };
 
     return (

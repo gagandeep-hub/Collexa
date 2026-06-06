@@ -1,0 +1,634 @@
+/* ─── Shared Admin Page Styles — White Theme ─────────────────────────────────── */
+
+:root {
+    --a-accent:        #4f46e5;
+    --a-accent-light:  #eef2ff;
+    --a-accent-text:   #4338ca;
+    --a-text-1:        #111827;
+    --a-text-2:        #374151;
+    --a-text-3:        #6b7280;
+    --a-text-4:        #9ca3af;
+    --a-border:        #e5e7eb;
+    --a-border-2:      #f3f4f6;
+    --a-card-bg:       #ffffff;
+    --a-hover-row:     #f9fafb;
+    --a-green:         #16a34a;
+    --a-green-light:   #f0fdf4;
+    --a-red:           #dc2626;
+    --a-red-light:     #fef2f2;
+    --a-orange:        #d97706;
+    --a-orange-light:  #fffbeb;
+    --a-blue:          #2563eb;
+    --a-blue-light:    #eff6ff;
+    --a-purple:        #7c3aed;
+    --a-purple-light:  #f5f3ff;
+    --a-gray-light:    #f9fafb;
+}
+
+/* ─── Page Header ────────────────────────────────────────────────────────────── */
+.admin-page-header {
+    margin-bottom: 24px;
+}
+
+.admin-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--a-text-1);
+    letter-spacing: -0.4px;
+    margin-bottom: 3px;
+}
+
+.admin-page-subtitle {
+    font-size: 0.875rem;
+    color: var(--a-text-3);
+}
+
+/* ─── Stat Cards Grid ────────────────────────────────────────────────────────── */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.admin-stat-card {
+    background: var(--a-card-bg);
+    border: 1px solid var(--a-border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    animation: fadeInUp 0.4s ease both;
+}
+
+.admin-stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.stat-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.stat-icon.green  { background: var(--a-green-light);  color: var(--a-green); }
+.stat-icon.blue   { background: var(--a-blue-light);   color: var(--a-blue); }
+.stat-icon.purple { background: var(--a-purple-light); color: var(--a-purple); }
+.stat-icon.orange { background: var(--a-orange-light); color: var(--a-orange); }
+.stat-icon.cyan   { background: #ecfeff; color: #0891b2; }
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--a-text-1);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    color: var(--a-text-3);
+    font-weight: 500;
+}
+
+/* color top-border accents */
+.admin-stat-card.color-green  { border-top: 3px solid var(--a-green); }
+.admin-stat-card.color-blue   { border-top: 3px solid var(--a-blue); }
+.admin-stat-card.color-purple { border-top: 3px solid var(--a-purple); }
+.admin-stat-card.color-orange { border-top: 3px solid var(--a-orange); }
+.admin-stat-card.color-cyan   { border-top: 3px solid #0891b2; }
+
+/* ─── Table Card ─────────────────────────────────────────────────────────────── */
+.admin-table-card {
+    background: var(--a-card-bg);
+    border: 1px solid var(--a-border);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: fadeInUp 0.35s ease both;
+}
+
+.admin-table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--a-border);
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.admin-table-card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--a-text-1);
+}
+
+.admin-table-count {
+    font-size: 0.75rem;
+    color: var(--a-text-3);
+    background: var(--a-gray-light);
+    border: 1px solid var(--a-border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* ─── Desktop Table ──────────────────────────────────────────────────────────── */
+.admin-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.admin-table th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--a-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: var(--a-gray-light);
+    border-bottom: 1px solid var(--a-border);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 13px 16px;
+    font-size: 0.875rem;
+    color: var(--a-text-2);
+    border-bottom: 1px solid var(--a-border-2);
+    vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tbody tr {
+    transition: background 0.12s ease;
+    cursor: pointer;
+}
+
+.admin-table tbody tr:hover {
+    background: var(--a-hover-row);
+}
+
+.admin-table td.td-name {
+    font-weight: 600;
+    color: var(--a-text-1);
+}
+
+/* ─── Mobile Card Table ──────────────────────────────────────────────────────── */
+/*
+  On mobile, each table row becomes a card.
+  Use data-label on each <td> — CSS shows them as key:value pairs.
+*/
+.mobile-cards {
+    display: none;
+}
+
+.m-card {
+    border-bottom: 1px solid var(--a-border);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background 0.12s ease;
+    cursor: pointer;
+}
+
+.m-card:last-child {
+    border-bottom: none;
+}
+
+.m-card:hover {
+    background: var(--a-hover-row);
+}
+
+.m-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.m-card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--a-text-1);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.m-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 2px;
+}
+
+.m-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    color: var(--a-text-3);
+}
+
+.m-card-meta-item strong {
+    color: var(--a-text-2);
+    font-weight: 500;
+}
+
+.m-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+/* ─── Badges ─────────────────────────────────────────────────────────────────── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-green  { background: var(--a-green-light);  color: var(--a-green); }
+.badge-blue   { background: var(--a-blue-light);   color: var(--a-blue); }
+.badge-purple { background: var(--a-purple-light); color: var(--a-purple); }
+.badge-orange { background: var(--a-orange-light); color: var(--a-orange); }
+.badge-red    { background: var(--a-red-light);    color: var(--a-red); }
+.badge-gray   { background: var(--a-gray-light);   color: var(--a-text-3); border: 1px solid var(--a-border); }
+.badge-cyan   { background: #ecfeff; color: #0891b2; }
+
+/* ─── Buttons ────────────────────────────────────────────────────────────────── */
+.admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.admin-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.admin-btn-danger {
+    background: var(--a-red-light);
+    color: var(--a-red);
+    border-color: #fecaca;
+}
+
+.admin-btn-danger:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.admin-btn-secondary {
+    background: var(--a-gray-light);
+    color: var(--a-text-2);
+    border-color: var(--a-border);
+}
+
+.admin-btn-secondary:hover {
+    background: #f3f4f6;
+    color: var(--a-text-1);
+}
+
+.admin-btn-view {
+    background: var(--a-blue-light);
+    color: var(--a-blue);
+    border-color: #bfdbfe;
+    padding: 5px 11px;
+}
+
+.admin-btn-view:hover {
+    background: #dbeafe;
+}
+
+.admin-btn-primary {
+    background: var(--a-accent);
+    color: #fff;
+    border-color: var(--a-accent);
+}
+
+.admin-btn-primary:hover {
+    background: var(--a-accent-text);
+}
+
+/* ─── Back Button ────────────────────────────────────────────────────────────── */
+.admin-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--a-text-3);
+    font-size: 0.83rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+}
+
+.admin-back-btn:hover {
+    color: var(--a-accent);
+}
+
+.admin-back-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* ─── Detail Cards ───────────────────────────────────────────────────────────── */
+.admin-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-detail-card {
+    background: var(--a-card-bg);
+    border: 1px solid var(--a-border);
+    border-radius: 12px;
+    padding: 20px;
+    animation: fadeInUp 0.35s ease both;
+}
+
+.admin-detail-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.admin-detail-card-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--a-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--a-border);
+}
+
+.admin-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--a-border-2);
+    gap: 16px;
+}
+
+.admin-detail-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.admin-detail-label {
+    font-size: 0.8rem;
+    color: var(--a-text-3);
+    font-weight: 500;
+    flex-shrink: 0;
+    min-width: 90px;
+}
+
+.admin-detail-value {
+    font-size: 0.875rem;
+    color: var(--a-text-1);
+    font-weight: 500;
+    text-align: right;
+    word-break: break-all;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────────────────── */
+.admin-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--a-border);
+}
+
+.admin-pagination-btn {
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--a-border);
+    background: var(--a-card-bg);
+    color: var(--a-text-2);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.admin-pagination-btn:hover:not(:disabled) {
+    background: var(--a-accent-light);
+    border-color: #c7d2fe;
+    color: var(--a-accent);
+}
+
+.admin-pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.admin-pagination-info {
+    font-size: 0.8rem;
+    color: var(--a-text-3);
+    padding: 0 8px;
+}
+
+/* ─── Loading / Empty ────────────────────────────────────────────────────────── */
+.admin-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 20px;
+    color: var(--a-text-3);
+    font-size: 0.875rem;
+    gap: 10px;
+}
+
+.admin-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--a-border);
+    border-top-color: var(--a-accent);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+.admin-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 20px;
+    color: var(--a-text-4);
+    gap: 10px;
+}
+
+.admin-empty svg {
+    width: 44px;
+    height: 44px;
+    opacity: 0.25;
+}
+
+.admin-empty p {
+    font-size: 0.875rem;
+}
+
+/* ─── Modal ──────────────────────────────────────────────────────────────────── */
+.admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.18s ease;
+}
+
+.admin-modal {
+    background: #fff;
+    border: 1px solid var(--a-border);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: scaleIn 0.18s ease;
+}
+
+.admin-modal-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--a-red-light);
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    color: var(--a-red);
+}
+
+.admin-modal-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.admin-modal h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--a-text-1);
+    margin-bottom: 8px;
+}
+
+.admin-modal p {
+    font-size: 0.875rem;
+    color: var(--a-text-3);
+    line-height: 1.6;
+    margin-bottom: 22px;
+}
+
+.admin-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Switch tables to mobile cards */
+    .admin-table-wrap {
+        display: none;
+    }
+
+    .mobile-cards {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-modal {
+        padding: 22px;
+    }
+}

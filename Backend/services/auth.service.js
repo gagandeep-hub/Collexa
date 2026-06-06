@@ -33,7 +33,8 @@ const formatAuthUser = (user) => {
         college: user.college,
         avatar: user.avatar,   // Google profile picture URL (empty string for local users)
         provider: user.provider, // 'local' | 'google' — lets frontend know login method
-        profileCompleted: user.profileCompleted // Used to enforce profile completion checks
+        profileCompleted: user.profileCompleted, // Used to enforce profile completion checks
+        role: user.role // Used by frontend to redirect admins and protect routes
     };
 };
 

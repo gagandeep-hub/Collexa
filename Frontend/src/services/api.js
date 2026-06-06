@@ -59,4 +59,20 @@ export const productAPI = {
     getMyProducts: () => api.get('/products/user/my-products')
 };
 
+// ─── Admin APIs ───────────────────────────────────────────────────────────────
+export const adminAPI = {
+    // Dashboard
+    getStats: () => api.get('/admin/stats'),
+
+    // Users
+    getAllUsers: (params) => api.get('/admin/users', { params }),
+    getUser: (id) => api.get(`/admin/users/${id}`),
+    deleteUser: (id) => api.delete(`/admin/users/${id}`),
+
+    // Listings
+    getAllListings: (params) => api.get('/admin/listings', { params }),
+    getListing: (id) => api.get(`/admin/listings/${id}`),
+    deleteListing: (id) => api.delete(`/admin/listings/${id}`)
+};
+
 export default api;

@@ -35,9 +35,9 @@ const GoogleLoginButton = ({ onSuccess }) => {
     const handleGoogleSuccess = async (credentialResponse) => {
         setLoading(true);
         try {
-            await loginWithGoogle(credentialResponse.credential);
+            const res = await loginWithGoogle(credentialResponse.credential);
             toast.success('Logged in with Google!');
-            if (onSuccess) onSuccess();
+            if (onSuccess) onSuccess(res.user);
         } catch (error) {
             const message = error.response?.data?.message || 'Google sign-in failed';
             toast.error(message);

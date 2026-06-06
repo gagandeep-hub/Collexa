@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleLoginButton from '../components/GoogleLoginButton';
@@ -11,12 +11,25 @@ const Login = () => {
         password: ''
     });
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     // Navigate to the page the user tried to access before being redirected to login
     const from = location.state?.from?.pathname || '/';
+
+    // React race condition fix: wait for the user state to actually update in context
+    // before navigating. If we navigate immediately after login(), AdminRoute might
+    // mount while context still thinks the user is null, causing an instant bounce back.
+    useEffect(() => {
+        if (user) {
+            if (user.role === 'admin') {
+                navigate('/admin/dashboard', { replace: true });
+            } else {
+                navigate(from, { replace: true });
+            }
+        }
+    }, [user, navigate, from]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,17 +42,17 @@ const Login = () => {
         try {
             await login(formData.email, formData.password);
             toast.success('Login successful!');
-            navigate(from, { replace: true });
+            // Redirection is handled by the useEffect above
         } catch (error) {
             toast.error(error.response?.data?.message || 'Login failed');
-        } finally {
             setLoading(false);
         }
     };
 
-    // Called by GoogleLoginButton after a successful Google login
+    // GoogleLoginButton triggers loginWithGoogle, which updates context.
+    // The useEffect above will handle the redirection.
     const handleGoogleSuccess = () => {
-        navigate(from, { replace: true });
+        // Redirection handled by useEffect
     };
 
     return (
