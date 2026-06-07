@@ -34,7 +34,7 @@ const MyProducts = () => {
         try {
             await productAPI.delete(id);
             toast.success('Listing deleted successfully');
-            setProducts(products.filter(p => p._id !== id));
+            setProducts(products.filter(p => p.id !== id));
         } catch (error) {
             toast.error('Failed to delete listing');
         }
@@ -105,9 +105,9 @@ const MyProducts = () => {
                 <div className="my-products-list">
                     {filteredProducts.map((product) => (
                         <div 
-                            key={product._id} 
+                            key={product.id} 
                             className="my-product-card"
-                            onClick={() => navigate(`/products/${product._id}`)}
+                            onClick={() => navigate(`/products/${product.id}`)}
                             style={{ cursor: 'pointer' }}
                         >
                             <div className="product-thumb">
@@ -135,14 +135,14 @@ const MyProducts = () => {
                             </div>
 
                             <div className="product-actions" onClick={(e) => e.stopPropagation()}>
-                                <Link to={`/edit-product/${product._id}`} className="btn-edit">
+                                <Link to={`/edit-product/${product.id}`} className="btn-edit">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                     </svg>
                                     Edit
                                 </Link>
-                                <button onClick={(e) => handleDelete(product._id, e)} className="btn-delete">
+                                <button onClick={(e) => handleDelete(product.id, e)} className="btn-delete">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>

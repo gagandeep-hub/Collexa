@@ -102,7 +102,7 @@ const AdminListings = () => {
                                 </thead>
                                 <tbody>
                                     {data.listings.map((listing) => (
-                                        <tr key={listing._id} onClick={() => navigate(`/admin/listings/${listing._id}`)}>
+                                        <tr key={listing.id} onClick={() => navigate(`/admin/listings/${listing.id}`)}>
                                             <td className="td-name">
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                                     <ListingThumb images={listing.images} title={listing.title} />
@@ -125,8 +125,8 @@ const AdminListings = () => {
                                             </td>
                                             <td onClick={(e) => e.stopPropagation()}>
                                                 <div style={{ display: 'flex', gap: 6 }}>
-                                                    <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/listings/${listing._id}`)}>View</button>
-                                                    <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: listing._id, title: listing.title })}>Delete</button>
+                                                    <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/listings/${listing.id}`)}>View</button>
+                                                    <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: listing.id, title: listing.title })}>Delete</button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -138,7 +138,7 @@ const AdminListings = () => {
                         {/* ── Mobile Cards ── */}
                         <div className="mobile-cards">
                             {data.listings.map((listing) => (
-                                <div key={listing._id} className="m-card" onClick={() => navigate(`/admin/listings/${listing._id}`)}>
+                                <div key={listing.id} className="m-card" onClick={() => navigate(`/admin/listings/${listing.id}`)}>
                                     <div className="m-card-header">
                                         <ListingThumb images={listing.images} title={listing.title} />
                                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -164,8 +164,8 @@ const AdminListings = () => {
                                         </span>
                                     </div>
                                     <div className="m-card-actions" onClick={(e) => e.stopPropagation()}>
-                                        <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/listings/${listing._id}`)}>View Details</button>
-                                        <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: listing._id, title: listing.title })}>Delete</button>
+                                        <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/listings/${listing.id}`)}>View Details</button>
+                                        <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: listing.id, title: listing.title })}>Delete</button>
                                     </div>
                                 </div>
                             ))}

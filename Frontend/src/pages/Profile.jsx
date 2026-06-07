@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { profileAPI } from '../services/api';
@@ -81,7 +82,15 @@ const Profile = () => {
                             : <span className="avatar-initials">{user?.name?.charAt(0).toUpperCase() || 'U'}</span>
                         }
                     </div>
-                    <h1>Edit Profile</h1>
+                    <h1>
+                        Edit Profile
+                        {user?.isVerified && (
+                            <span style={{ fontSize: '0.9rem', marginLeft: '10px', color: '#10b981', verticalAlign: 'middle' }}>✅ Verified Account</span>
+                        )}
+                        {!user?.isVerified && user && (
+                            <span style={{ fontSize: '0.9rem', marginLeft: '10px', color: '#f59e0b', verticalAlign: 'middle' }}>⏳ Verification Pending</span>
+                        )}
+                    </h1>
                     <p>Manage your personal information</p>
                 </div>
 

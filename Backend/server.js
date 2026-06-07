@@ -1,12 +1,12 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
+const connectDB = require('./config/db');
 const app = express();
 
-// Middleware
+// ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors({
     origin: ['http://localhost:5173', 'https://collexa-frontend.onrender.com'],
     credentials: true
@@ -14,35 +14,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded files
+// Serve uploaded files (if any local uploads still used alongside Cloudinary)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// MongoDB Connection
-const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('✅ MongoDB Connected Successfully');
-    } catch (error) {
-        console.error('❌ MongoDB Connection Error:', error.message);
-        process.exit(1);
-    }
-};
-
-// Routes
+// ─── Routes ───────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
     res.json({
-        message: 'Welcome to CampusResell API',
+        message: 'Welcome to Collexa API',
         status: 'Server is running'
     });
 });
 
-// Import Routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/profile', require('./routes/profile.routes'));
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 
-// Error handling middleware
+// ─── Error Handling Middleware ────────────────────────────────────────────────
 app.use((err, req, res, next) => {
     console.error(err.stack);
 
@@ -51,19 +39,27 @@ app.use((err, req, res, next) => {
         return res.status(400).json({
             success: false,
             message: err.message === 'File too large'
-                ? 'File is too large using 10MB limit. Please upload images smaller than 10MB.'
+                ? 'File is too large. Please upload images smaller than 10MB.'
                 : err.message
         });
     }
 
-    res.status(500).json({
+    // Handle Prisma known request errors
+    if (err.code === 'P2002') {
+        return res.status(409).json({
+            success: false,
+            message: 'A record with this value already exists.'
+        });
+    }
+
+    res.status(err.statusCode || 500).json({
         success: false,
-        message: 'Something went wrong!',
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        message: err.message || 'Something went wrong!',
+        error: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
 });
 
-// 404 handler
+// ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -71,7 +67,7 @@ app.use((req, res) => {
     });
 });
 
-// Start Server
+// ─── Start Server ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {

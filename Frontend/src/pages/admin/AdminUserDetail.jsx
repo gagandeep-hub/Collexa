@@ -92,19 +92,51 @@ const AdminUserDetail = () => {
                         <p className="admin-page-subtitle">{user.email}</p>
                     </div>
                 </div>
-                {user.role !== 'admin' && (
-                    <button
-                        className="admin-btn admin-btn-danger"
-                        onClick={() => setDeleteModal(true)}
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                        </svg>
-                        Delete User
-                    </button>
-                )}
-            </div>
+                    {user.role !== 'admin' && (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            {user.isVerified ? (
+                                <button
+                                    className="admin-btn admin-btn-secondary"
+                                    disabled
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    Verified
+                                </button>
+                            ) : (
+                                <button
+                                    className="admin-btn admin-btn-primary"
+                                    style={{ background: '#10b981', color: 'white', borderColor: '#10b981' }}
+                                    onClick={async () => {
+                                        try {
+                                            await adminAPI.verifyUser(id);
+                                            setUser({ ...user, isVerified: true });
+                                            toast.success('User verified successfully');
+                                        } catch (err) {
+                                            toast.error(err.response?.data?.message || 'Failed to verify user');
+                                        }
+                                    }}
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    Verify User
+                                </button>
+                            )}
+                            <button
+                                className="admin-btn admin-btn-danger"
+                                onClick={() => setDeleteModal(true)}
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                                </svg>
+                                Delete User
+                            </button>
+                        </div>
+                    )}
+                </div>
 
             {/* Detail grid */}
             <div className="admin-detail-grid">
@@ -206,8 +238,8 @@ const AdminUserDetail = () => {
                             <tbody>
                                 {listings.map((listing) => (
                                     <tr
-                                        key={listing._id}
-                                        onClick={() => navigate(`/admin/listings/${listing._id}`)}
+                                        key={listing.id}
+                                        onClick={() => navigate(`/admin/listings/${listing.id}`)}
                                     >
                                         <td className="td-name">{listing.title}</td>
                                         <td>
@@ -223,7 +255,7 @@ const AdminUserDetail = () => {
                                         <td onClick={(e) => e.stopPropagation()}>
                                             <button
                                                 className="admin-btn admin-btn-view"
-                                                onClick={() => navigate(`/admin/listings/${listing._id}`)}
+                                                onClick={() => navigate(`/admin/listings/${listing.id}`)}
                                             >
                                                 View
                                             </button>

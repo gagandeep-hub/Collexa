@@ -1,19 +1,16 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
-const User = require('../models/User.model');
+const prisma = require('../lib/prisma');
 const AppError = require('../utils/AppError');
 
 // ─── Google OAuth Client ────────────────────────────────────────────────────
-// One client instance is created per process. Reusing it is more efficient
-// than instantiating inside every request.
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Generates a signed JWT for a given MongoDB user _id.
- * The token is self-contained — no DB lookup needed on protected routes.
+ * Generates a signed JWT for a given user id (UUID string in Prisma).
  */
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -23,18 +20,18 @@ const generateToken = (id) => {
 
 /**
  * Strips sensitive fields before sending user data to the frontend.
- * Always return a consistent shape regardless of auth provider.
+ * Mongoose ka ._id → Prisma ka .id
  */
 const formatAuthUser = (user) => {
     return {
-        id: user._id,
+        id: user.id,             // Prisma uses .id (UUID), not ._id
         name: user.name,
         email: user.email,
         college: user.college,
-        avatar: user.avatar,   // Google profile picture URL (empty string for local users)
-        provider: user.provider, // 'local' | 'google' — lets frontend know login method
-        profileCompleted: user.profileCompleted, // Used to enforce profile completion checks
-        role: user.role // Used by frontend to redirect admins and protect routes
+        avatar: user.avatar,
+        provider: user.provider,
+        profileCompleted: user.profileCompleted,
+        role: user.role
     };
 };
 
@@ -42,11 +39,10 @@ const formatAuthUser = (user) => {
 
 /**
  * Registers a new local user.
- * Hashing is done here in the service — not in a Mongoose hook — to keep
- * the responsibility explicit and avoid double-hashing risks.
  */
 const register = async ({ name, email, password, phone, college }) => {
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
         throw new AppError('User already exists with this email', 400);
@@ -55,31 +51,40 @@ const register = async ({ name, email, password, phone, college }) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-        phone,
-        college,
-        provider: 'local'
+    const isProfileComplete = !!(
+        phone && typeof phone === 'string' && phone.trim() !== '' &&
+        college && typeof college === 'string' && college.trim() !== ''
+    );
+
+    const user = await prisma.user.create({
+        data: {
+            name,
+            email,
+            password: hashedPassword,
+            phone,
+            college,
+            provider: 'local',
+            profileCompleted: isProfileComplete
+        }
     });
 
     return {
-        token: generateToken(user._id),
+        token: generateToken(user.id),
         user: formatAuthUser(user)
     };
 };
 
 /**
  * Authenticates a local user with email + password.
- * Returns the same {token, user} shape as register() and googleAuth().
  */
 const login = async ({ email, password }) => {
     if (!email || !password) {
         throw new AppError('Please provide email and password', 400);
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    // Prisma mein .select('+password') nahi hota — password field always included hai
+    // schema mein password optional hai, toh null check zaruri hai
+    const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
         throw new AppError('Invalid credentials', 401);
@@ -100,7 +105,7 @@ const login = async ({ email, password }) => {
     }
 
     return {
-        token: generateToken(user._id),
+        token: generateToken(user.id),
         user: formatAuthUser(user)
     };
 };
@@ -111,24 +116,19 @@ const login = async ({ email, password }) => {
  * Authenticates or registers a user via Google OAuth ID Token.
  *
  * Flow:
- *  1. Verify the ID token with Google's servers (prevents token forgery)
+ *  1. Verify the ID token with Google's servers
  *  2. Extract user info from the verified payload
- *  3. Look up existing user by googleId (most efficient — stable identifier)
- *  4. If not found by googleId, look up by email (handles pre-existing local accounts)
- *     → If found: link the Google account to the existing user
- *     → If not found: create a brand-new Google-only user
- *  5. Return {token, user} — identical shape to login() / register()
- *
- * @param {string} idToken - The credential string returned by Google's popup
+ *  3. Look up by googleId (returning users)
+ *  4a. If not found by googleId → check by email (link existing local account)
+ *  4b. If no email match → create brand new Google user
+ *  5. Return {token, user}
  */
 const googleAuth = async (idToken) => {
     if (!idToken) {
         throw new AppError('Google ID token is required', 400);
     }
 
-    // Step 1: Verify the token with Google
-    // This makes an HTTPS call to Google's public key endpoint.
-    // It will throw if the token is expired, malformed, or for a different app.
+    // Step 1: Verify with Google
     let payload;
     try {
         const ticket = await googleClient.verifyIdToken({
@@ -140,44 +140,49 @@ const googleAuth = async (idToken) => {
         throw new AppError('Invalid or expired Google token', 401);
     }
 
-    // Step 2: Extract user info from verified payload
+    // Step 2: Extract user info
     const { sub: googleId, email, name, picture: avatar } = payload;
 
     if (!email) {
         throw new AppError('Could not retrieve email from Google account', 400);
     }
 
-    // Step 3: Find by googleId first (fastest path for returning users)
-    let user = await User.findOne({ googleId });
+    // Step 3: Find by googleId (fastest path for returning users)
+    let user = await prisma.user.findUnique({ where: { googleId } });
 
     if (!user) {
-        // Step 4a: Check if a local account with this email already exists
-        user = await User.findOne({ email });
+        // Step 4a: Check if a local account with this email exists
+        user = await prisma.user.findUnique({ where: { email } });
 
         if (user) {
             // Link Google to the existing local account
-            // The user can now sign in with either method
-            user.googleId = googleId;
-            user.provider = 'google'; // Upgrade to Google provider
-            if (!user.avatar) user.avatar = avatar; // Set avatar only if not already set
-            await user.save();
+            user = await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    googleId,
+                    provider: 'google',
+                    // Only set avatar if not already set
+                    ...((!user.avatar || user.avatar === '') && { avatar: avatar || '' })
+                }
+            });
         } else {
             // Step 4b: Brand new user — create with Google info
-            user = await User.create({
-                name,
-                email,
-                googleId,
-                avatar: avatar || '',
-                provider: 'google'
-                // No password field — intentionally left undefined
+            user = await prisma.user.create({
+                data: {
+                    name,
+                    email,
+                    googleId,
+                    avatar: avatar || '',
+                    provider: 'google'
+                    // No password — intentionally omitted
+                }
             });
         }
     }
 
-    // Step 5: Return our own JWT (not Google's token)
-    // From this point, the auth flow is identical to email/password login
+    // Step 5: Return our own JWT
     return {
-        token: generateToken(user._id),
+        token: generateToken(user.id),
         user: formatAuthUser(user)
     };
 };
@@ -185,11 +190,29 @@ const googleAuth = async (idToken) => {
 // ─── Utility ──────────────────────────────────────────────────────────────────
 
 /**
- * Returns the full user document for the /me endpoint.
- * The select('-password') ensures the password hash is never sent to the client.
+ * Returns the full user for the /me endpoint (without password).
  */
 const getCurrentUser = async (userId) => {
-    return User.findById(userId).select('-password');
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            college: true,
+            avatar: true,
+            provider: true,
+            role: true,
+            isVerified: true,
+            profileCompleted: true,
+            createdAt: true,
+            updatedAt: true
+            // password intentionally excluded
+        }
+    });
+
+    return user;
 };
 
 module.exports = {

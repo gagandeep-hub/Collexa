@@ -105,7 +105,7 @@ const AdminUsers = () => {
                                 </thead>
                                 <tbody>
                                     {data.users.map((user) => (
-                                        <tr key={user._id} onClick={() => navigate(`/admin/users/${user._id}`)}>
+                                        <tr key={user.id} onClick={() => navigate(`/admin/users/${user.id}`)}>
                                             <td className="td-name">
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                                     <Avatar user={user} size={32} />
@@ -126,9 +126,9 @@ const AdminUsers = () => {
                                             </td>
                                             <td onClick={(e) => e.stopPropagation()}>
                                                 <div style={{ display: 'flex', gap: 6 }}>
-                                                    <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/users/${user._id}`)}>View</button>
+                                                    <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/users/${user.id}`)}>View</button>
                                                     {user.role !== 'admin' && (
-                                                        <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: user._id, name: user.name })}>Delete</button>
+                                                        <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: user.id, name: user.name })}>Delete</button>
                                                     )}
                                                 </div>
                                             </td>
@@ -141,7 +141,7 @@ const AdminUsers = () => {
                         {/* ── Mobile Cards ── */}
                         <div className="mobile-cards">
                             {data.users.map((user) => (
-                                <div key={user._id} className="m-card" onClick={() => navigate(`/admin/users/${user._id}`)}>
+                                <div key={user.id} className="m-card" onClick={() => navigate(`/admin/users/${user.id}`)}>
                                     <div className="m-card-header">
                                         <Avatar user={user} size={38} />
                                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -161,9 +161,9 @@ const AdminUsers = () => {
                                         </span>
                                     </div>
                                     <div className="m-card-actions" onClick={(e) => e.stopPropagation()}>
-                                        <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/users/${user._id}`)}>View Details</button>
+                                        <button className="admin-btn admin-btn-view" onClick={() => navigate(`/admin/users/${user.id}`)}>View Details</button>
                                         {user.role !== 'admin' && (
-                                            <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: user._id, name: user.name })}>Delete</button>
+                                            <button className="admin-btn admin-btn-danger" onClick={() => setDeleteModal({ id: user.id, name: user.name })}>Delete</button>
                                         )}
                                     </div>
                                 </div>

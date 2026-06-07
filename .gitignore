@@ -34,3 +34,5 @@ Thumbs.db
 
 # Admin seed scripts (contain credentials — never commit)
 Backend/scripts/
+
+/generated/prisma

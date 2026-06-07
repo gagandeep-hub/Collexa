@@ -1,9 +1,13 @@
-const Product = require('../models/Product.model');
+const prisma = require('../lib/prisma');
 const { uploadMultipleToCloudinary } = require('../utils/cloudinaryUpload');
 const AppError = require('../utils/AppError');
 
-const PRODUCT_ID_PATTERN = /^[0-9a-fA-F]{24}$/;
+// ─── Get Products (with filters) ──────────────────────────────────────────────
 
+/**
+ * Fetches available products with optional filters.
+ * Mongoose ka query builder → Prisma ka where/orderBy object.
+ */
 const getProducts = async ({
     category,
     condition,
@@ -12,75 +16,118 @@ const getProducts = async ({
     search,
     sort
 }) => {
-    const query = { status: 'available' };
+    // Build Prisma where clause
+    const where = { status: 'available' };
 
-    if (category) query.category = category;
-    if (condition) query.condition = condition;
+    if (category) where.category = category;
+    if (condition) where.condition = condition;
 
     if (minPrice || maxPrice) {
-        query.price = {};
-        if (minPrice) query.price.$gte = Number(minPrice);
-        if (maxPrice) query.price.$lte = Number(maxPrice);
+        where.price = {};
+        if (minPrice) where.price.gte = Number(minPrice);   // $gte → gte
+        if (maxPrice) where.price.lte = Number(maxPrice);   // $lte → lte
     }
 
+    // Full-text search — Prisma mein PostgreSQL @db.Text fields pe mode: 'insensitive'
+    // ya contains use hota hai. Schema mein @db.VarChar(100) hai.
     if (search) {
-        query.$text = { $search: search };
+        where.OR = [
+            { title: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } }
+        ];
     }
 
-    let sortOption = { createdAt: -1 };
-    if (sort === 'price-low') sortOption = { price: 1 };
-    if (sort === 'price-high') sortOption = { price: -1 };
+    // Sort options — Mongoose wala { price: 1 } → Prisma wala { price: 'asc' }
+    let orderBy = { createdAt: 'desc' };
+    if (sort === 'price-low') orderBy = { price: 'asc' };
+    if (sort === 'price-high') orderBy = { price: 'desc' };
 
-    return Product.find(query)
-        .populate('seller', 'name email college')
-        .sort(sortOption);
+    return prisma.product.findMany({
+        where,
+        orderBy,
+        include: {
+            seller: {
+                select: { id: true, name: true, email: true, college: true }
+            }
+        }
+    });
 };
 
+// ─── Get Single Product ───────────────────────────────────────────────────────
+
 const getProduct = async (productId) => {
-    if (!PRODUCT_ID_PATTERN.test(productId)) {
+    // MongoDB uses 24-char hex ObjectId — Prisma uses UUID (36 chars)
+    // UUID format validation (basic)
+    const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!UUID_PATTERN.test(productId)) {
         throw new AppError('Product not found', 404);
     }
 
-    const product = await Product.findById(productId)
-        .populate('seller', 'name email phone college');
+    const product = await prisma.product.findUnique({
+        where: { id: productId },
+        include: {
+            seller: {
+                select: { id: true, name: true, email: true, phone: true, college: true, isVerified: true }
+            }
+        }
+    });
 
     if (!product) {
         throw new AppError('Product not found', 404);
     }
 
-    product.views += 1;
-    await product.save();
+    // Increment view count — Mongoose ka product.views += 1 → Prisma increment
+    await prisma.product.update({
+        where: { id: productId },
+        data: { views: { increment: 1 } }
+    });
 
     return product;
 };
 
+// ─── Create Product ───────────────────────────────────────────────────────────
+
 const createProduct = async (productData, sellerId, files) => {
-    const data = {
-        ...productData,
-        seller: sellerId
-    };
+    let images = [];
 
     if (files && files.length > 0) {
-        data.images = await uploadMultipleToCloudinary(files);
+        images = await uploadMultipleToCloudinary(files);
     }
 
-    return Product.create(data);
+    return prisma.product.create({
+        data: {
+            title: productData.title,
+            description: productData.description,
+            price: Number(productData.price),
+            originalPrice: productData.originalPrice ? Number(productData.originalPrice) : null,
+            category: productData.category,
+            condition: productData.condition,
+            college: productData.college || null,
+            location: productData.location || null,
+            images,
+            sellerId    // Foreign key — Prisma uses sellerId (not seller: ObjectId)
+        }
+    });
 };
 
+// ─── Update Product ───────────────────────────────────────────────────────────
+
 const updateProduct = async (productId, productData, userId, files) => {
-    const product = await Product.findById(productId);
+    const product = await prisma.product.findUnique({ where: { id: productId } });
 
     if (!product) {
         throw new AppError('Product not found', 404);
     }
 
-    if (product.seller.toString() !== userId) {
+    // Ownership check — Prisma mein product.seller → product.sellerId
+    if (product.sellerId !== userId) {
         throw new AppError('Not authorized to update this product', 403);
     }
 
     const data = { ...productData };
     let images = [];
 
+    // Keep existing images that the frontend sent back
     if (data.existingImages) {
         const existing = Array.isArray(data.existingImages)
             ? data.existingImages
@@ -88,6 +135,7 @@ const updateProduct = async (productId, productData, userId, files) => {
         images = [...existing];
     }
 
+    // Upload new files and append
     if (files && files.length > 0) {
         const newImageUrls = await uploadMultipleToCloudinary(files);
         images = [...images, ...newImageUrls];
@@ -99,28 +147,39 @@ const updateProduct = async (productId, productData, userId, files) => {
 
     delete data.existingImages;
 
-    return Product.findByIdAndUpdate(productId, data, {
-        new: true,
-        runValidators: true
+    // Convert price strings to numbers for Prisma Decimal
+    if (data.price !== undefined) data.price = Number(data.price);
+    if (data.originalPrice !== undefined) data.originalPrice = data.originalPrice ? Number(data.originalPrice) : null;
+
+    return prisma.product.update({
+        where: { id: productId },
+        data
     });
 };
 
+// ─── Delete Product ───────────────────────────────────────────────────────────
+
 const deleteProduct = async (productId, userId) => {
-    const product = await Product.findById(productId);
+    const product = await prisma.product.findUnique({ where: { id: productId } });
 
     if (!product) {
         throw new AppError('Product not found', 404);
     }
 
-    if (product.seller.toString() !== userId) {
+    if (product.sellerId !== userId) {
         throw new AppError('Not authorized to delete this product', 403);
     }
 
-    await product.deleteOne();
+    await prisma.product.delete({ where: { id: productId } });
 };
 
+// ─── My Products ──────────────────────────────────────────────────────────────
+
 const getMyProducts = async (userId) => {
-    return Product.find({ seller: userId });
+    return prisma.product.findMany({
+        where: { sellerId: userId },
+        orderBy: { createdAt: 'desc' }
+    });
 };
 
 module.exports = {

@@ -67,6 +67,7 @@ export const adminAPI = {
     // Users
     getAllUsers: (params) => api.get('/admin/users', { params }),
     getUser: (id) => api.get(`/admin/users/${id}`),
+    verifyUser: (id) => api.patch(`/admin/users/${id}/verify`),
     deleteUser: (id) => api.delete(`/admin/users/${id}`),
 
     // Listings

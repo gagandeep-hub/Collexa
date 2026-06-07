@@ -1,15 +1,14 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User.model');
+const prisma = require('../lib/prisma');
 
+// ─── Protect Middleware ───────────────────────────────────────────────────────
 exports.protect = async (req, res, next) => {
     let token;
 
-    // Check for token in header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
     }
 
-    // Check if token exists
     if (!token) {
         return res.status(401).json({
             success: false,
@@ -18,11 +17,13 @@ exports.protect = async (req, res, next) => {
     }
 
     try {
-        // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Get user from token
-        req.user = await User.findById(decoded.id);
+        // Mongoose: User.findById(decoded.id)
+        // Prisma:   prisma.user.findUnique({ where: { id: decoded.id } })
+        req.user = await prisma.user.findUnique({
+            where: { id: decoded.id }
+        });
 
         if (!req.user) {
             return res.status(401).json({
@@ -40,7 +41,7 @@ exports.protect = async (req, res, next) => {
     }
 };
 
-// Admin middleware
+// ─── Admin Middleware ─────────────────────────────────────────────────────────
 exports.admin = (req, res, next) => {
     if (req.user.role !== 'admin') {
         return res.status(403).json({
@@ -51,9 +52,8 @@ exports.admin = (req, res, next) => {
     next();
 };
 
-// Profile completion middleware
+// ─── Profile Completion Middleware ────────────────────────────────────────────
 exports.checkProfileCompletion = (req, res, next) => {
-    // Requires protect middleware to be run first so req.user exists
     if (!req.user || !req.user.profileCompleted) {
         return res.status(403).json({
             success: false,

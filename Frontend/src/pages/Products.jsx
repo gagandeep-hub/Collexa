@@ -166,7 +166,7 @@ const Products = () => {
                 ) : (
                     <div className="products-grid">
                         {products.map((product) => (
-                            <ProductCard key={product._id} product={product} />
+                            <ProductCard key={product.id} product={product} />
                         ))}
                     </div>
                 )}

@@ -1,5 +1,31 @@
-const User = require('../models/User.model');
+const prisma = require('../lib/prisma');
 const AppError = require('../utils/AppError');
+
+// ─── Helper — profileCompleted calculate karo ─────────────────────────────────
+// Mongoose mein yeh pre('save') hook karta tha
+// Prisma mein hook nahi hota — isliye helper function banaya
+
+const calcProfileCompleted = (phone, college) => {
+    return !!(
+        phone && typeof phone === 'string' && phone.trim() !== '' &&
+        college && typeof college === 'string' && college.trim() !== ''
+    );
+};
+
+// ─── Helper — clean response banao ───────────────────────────────────────────
+// Mongoose mein user._id tha, Prisma mein user.id hai
+// Yeh helper baar baar same object likhne se bachata hai
+
+const formatUser = (user) => ({
+    id: user.id,                    // Prisma mein .id — MongoDB wala ._id nahi
+    name: user.name,
+    email: user.email,
+    phone: user.phone || '',
+    college: user.college || '',
+    avatar: user.avatar,
+    provider: user.provider,
+    profileCompleted: user.profileCompleted
+});
 
 // ─── Feature 2: Edit Profile ──────────────────────────────────────────────────
 
@@ -8,57 +34,56 @@ const AppError = require('../utils/AppError');
  * Used by the Edit Profile page to populate the form.
  */
 const getProfile = async (userId) => {
-    const user = await User.findById(userId);
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+
     if (!user) throw new AppError('User not found', 404);
 
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        college: user.college || '',
-        avatar: user.avatar,
-        provider: user.provider,
-        profileCompleted: user.profileCompleted
-    };
+    return formatUser(user);
 };
 
 /**
  * Updates a user's profile (name, phone, college).
- * Used by the Edit Profile page — works for ALL users regardless of profileCompleted.
- * The pre('save') hook recalculates profileCompleted automatically.
+ * Works for ALL users regardless of profileCompleted.
+ * profileCompleted manually recalculate hoga — Prisma mein pre-save hook nahi hota.
  */
 const updateProfile = async (userId, updateData) => {
     const { name, phone, college } = updateData;
 
-    const user = await User.findById(userId);
-    if (!user) throw new AppError('User not found', 404);
+    // Pehle user exist karta hai ya nahi check karo
+    const existing = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+    if (!existing) throw new AppError('User not found', 404);
 
-    // Only update fields that were provided
-    if (name && name.trim()) user.name = name.trim();
-    if (phone !== undefined) user.phone = phone;
-    if (college !== undefined) user.college = college;
+    // Sirf woh fields update karo jo provide ki gayi hain
+    // Mongoose wala pattern: if (name) user.name = name
+    const dataToUpdate = {};
 
-    await user.save(); // pre('save') hook recalculates profileCompleted
+    if (name && name.trim()) dataToUpdate.name = name.trim();
+    if (phone !== undefined) dataToUpdate.phone = phone;
+    if (college !== undefined) dataToUpdate.college = college;
 
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        college: user.college || '',
-        avatar: user.avatar,
-        provider: user.provider,
-        profileCompleted: user.profileCompleted
-    };
+    // profileCompleted recalculate karo
+    // updated values ya existing values use karo
+    const finalPhone = phone !== undefined ? phone : existing.phone;
+    const finalCollege = college !== undefined ? college : existing.college;
+    dataToUpdate.profileCompleted = calcProfileCompleted(finalPhone, finalCollege);
+
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: dataToUpdate
+    });
+
+    return formatUser(user);
 };
 
 // ─── Feature 1: Profile Completion (Onboarding) ───────────────────────────────
 
 /**
  * Completes an incomplete profile.
- * Accepts ONLY phone and college — this is the onboarding step for Google OAuth users.
- * The pre('save') hook will set profileCompleted = true if both fields are filled.
+ * Sirf phone aur college accept karta hai — Google OAuth users ke liye onboarding step.
  */
 const completeProfile = async (userId, { phone, college }) => {
     if (!phone || !phone.trim()) {
@@ -68,24 +93,22 @@ const completeProfile = async (userId, { phone, college }) => {
         throw new AppError('College name is required', 400);
     }
 
-    const user = await User.findById(userId);
-    if (!user) throw new AppError('User not found', 404);
+    // User exist karta hai check karo
+    const existing = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+    if (!existing) throw new AppError('User not found', 404);
 
-    user.phone = phone.trim();
-    user.college = college.trim();
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: {
+            phone: phone.trim(),
+            college: college.trim(),
+            profileCompleted: true   // dono fields fill hain toh guaranteed true
+        }
+    });
 
-    await user.save(); // pre('save') hook sets profileCompleted = true
-
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        college: user.college,
-        avatar: user.avatar,
-        provider: user.provider,
-        profileCompleted: user.profileCompleted
-    };
+    return formatUser(user);
 };
 
 module.exports = {

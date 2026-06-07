@@ -81,6 +81,22 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
+// @desc    Verify a user account
+// @route   PATCH /api/admin/users/:id/verify
+// @access  Private/Admin
+exports.verifyUser = async (req, res) => {
+    try {
+        const user = await adminService.verifyUser(req.params.id);
+        return res.status(200).json({
+            success: true,
+            message: 'User verified successfully',
+            user
+        });
+    } catch (error) {
+        return sendErrorResponse(res, error, 'Error verifying user');
+    }
+};
+
 // ─── Listing Management ───────────────────────────────────────────────────────
 
 // @desc    Get all listings (paginated)

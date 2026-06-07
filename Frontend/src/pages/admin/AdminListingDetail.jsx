@@ -205,7 +205,7 @@ const AdminListingDetail = () => {
                                             cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500,
                                             padding: 0, textDecoration: 'underline'
                                         }}
-                                        onClick={() => navigate(`/admin/users/${listing.seller._id}`)}
+                                        onClick={() => navigate(`/admin/users/${listing.seller.id}`)}
                                     >
                                         {listing.seller.name}
                                     </button>

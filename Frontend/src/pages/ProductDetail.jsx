@@ -126,7 +126,14 @@ const ProductDetail = () => {
                                 {product.seller?.name?.charAt(0).toUpperCase() || 'S'}
                             </div>
                             <div className="seller-details">
-                                <p className="seller-name">{product.seller?.name}</p>
+                                <p className="seller-name" style={{ display: 'flex', alignItems: 'center' }}>
+                                    {product.seller?.name}
+                                    {product.seller?.isVerified ? (
+                                        <span style={{ fontSize: '0.8rem', marginLeft: '6px', color: '#10b981' }}>✅ Verified</span>
+                                    ) : (
+                                        <span style={{ fontSize: '0.8rem', marginLeft: '6px', color: '#f59e0b' }}>⏳ Unverified</span>
+                                    )}
+                                </p>
                                 <p className="seller-college">{product.seller?.college || 'Campus Student'}</p>
                             </div>
                         </div>

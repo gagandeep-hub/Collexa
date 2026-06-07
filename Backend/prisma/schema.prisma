@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// ─── USER ────────────────────────────────────────────────────────────────────
+
+model User {
+  id               String    @id @default(uuid())
+  name             String    @db.VarChar(50)
+  email            String    @unique @db.VarChar(255)
+  password         String?                           // optional — OAuth users ke liye
+  phone            String?
+  college          String?
+  avatar           String?   @default("")
+  googleId         String?   @unique                 // sparse: true ka equivalent
+  provider         Provider  @default(local)
+  role             Role      @default(user)
+  isVerified       Boolean   @default(false)
+  profileCompleted Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  products         Product[]                         // seller ka relation
+
+  @@map("users")
+}
+
+// ─── PRODUCT ─────────────────────────────────────────────────────────────────
+
+model Product {
+  id            String        @id @default(uuid())
+  title         String        @db.VarChar(100)
+  description   String        @db.VarChar(1000)
+  price         Decimal       @db.Decimal(10, 2)
+  originalPrice Decimal?      @db.Decimal(10, 2)
+  category      Category
+  condition     Condition
+  images        String[]                             // PostgreSQL array
+  college       String?
+  location      String?
+  status        ProductStatus @default(available)
+  views         Int           @default(0)
+  isFeatured    Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  sellerId      String
+  seller        User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("products")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
+enum Provider {
+  local
+  google
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum Category {
+  books
+  electronics
+  furniture
+  clothing
+  sports
+  stationery
+  other
+}
+
+enum Condition {
+  new
+  like_new    // ⚠️ hyphen allowed nahi PostgreSQL enums mein, underscore use karo
+  good
+  fair
+  poor
+}
+
+enum ProductStatus {
+  available
+  sold
+  reserved
+}

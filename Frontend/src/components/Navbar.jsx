@@ -74,6 +74,18 @@ const Navbar = () => {
 
                                 {dropdownOpen && (
                                     <div className="user-dropdown">
+                                        <div className="dropdown-item" style={{ cursor: 'default', backgroundColor: 'transparent' }}>
+                                            {user?.isVerified ? (
+                                                <span style={{ color: '#10b981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    ✅ Verified User
+                                                </span>
+                                            ) : (
+                                                <span style={{ color: '#f59e0b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    ⏳ Verification Pending
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="dropdown-divider" />
                                         <Link
                                             to="/profile"
                                             className="dropdown-item"

@@ -23,8 +23,12 @@
     "express": "^5.2.1",
     "google-auth-library": "^10.6.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^9.1.6",
     "multer": "^2.0.2",
     "nodemon": "^3.1.11"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.19.3",
+    "@types/node": "^25.9.2",
+    "prisma": "^6.19.3"
   }
 }

@@ -7,6 +7,7 @@ const {
     getAllUsers,
     getUser,
     deleteUser,
+    verifyUser,
     getAllListings,
     getListing,
     deleteListing
@@ -25,6 +26,7 @@ router.get('/stats', getStats);
 router.get('/users', getAllUsers);
 router.get('/users/:id', getUser);
 router.delete('/users/:id', deleteUser);
+router.patch('/users/:id/verify', verifyUser);
 
 // ─── Listing Management ───────────────────────────────────────────────────────
 router.get('/listings', getAllListings);
