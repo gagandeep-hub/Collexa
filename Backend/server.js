@@ -8,7 +8,11 @@ const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://collexa-frontend.onrender.com'],
+    origin: [
+        'http://localhost:5173',               // local dev
+        'http://frontend:5173',                // Docker internal network
+        'https://collexa-frontend.onrender.com' // production
+    ],
     credentials: true
 }));
 app.use(express.json());
