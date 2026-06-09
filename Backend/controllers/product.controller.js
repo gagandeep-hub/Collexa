@@ -1,4 +1,5 @@
 const productService = require('../services/product.service');
+const prisma = require('../lib/prisma');
 
 const sendErrorResponse = (res, error, fallbackMessage) => {
     const response = {
@@ -78,6 +79,20 @@ exports.updateProduct = async (req, res) => {
             req.user.id,
             req.files
         );
+
+        // ── Auto-close chats if product is marked sold or reserved ────────
+        if (req.body.status === 'sold' || req.body.status === 'reserved') {
+            await prisma.conversation.updateMany({
+                where: { productId: req.params.id },
+                data: { isClosed: true }
+            });
+        } else if (req.body.status === 'available') {
+            // Re-open chats if seller marks the product as available again
+            await prisma.conversation.updateMany({
+                where: { productId: req.params.id },
+                data: { isClosed: false }
+            });
+        }
 
         return res.status(200).json({
             success: true,

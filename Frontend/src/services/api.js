@@ -76,4 +76,14 @@ export const adminAPI = {
     deleteListing: (id) => api.delete(`/admin/listings/${id}`)
 };
 
+// ─── Chat APIs ────────────────────────────────────────────────────────────────
+export const chatAPI = {
+    createOrGetConversation: (productId) => api.post('/chat/conversations', { productId }),
+    getConversations: () => api.get('/chat/conversations'),
+    getMessages: (conversationId, page = 1) =>
+        api.get(`/chat/conversations/${conversationId}/messages`, { params: { page } }),
+    getUnreadCount: () => api.get('/chat/unread')
+};
+
 export default api;
+

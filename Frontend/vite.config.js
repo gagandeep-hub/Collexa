@@ -8,5 +8,8 @@ export default defineConfig({
     host: true,       // 0.0.0.0 pe bind karo — Docker ke liye zaroori
     port: 5173,
     historyApiFallback: true,
+    watch: {
+      usePolling: true,
+    },
   },
 })

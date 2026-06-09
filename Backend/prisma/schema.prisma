@@ -31,7 +31,12 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  products         Product[]                         // seller ka relation
+  products              Product[]                         // seller ka relation
+
+  // Chat Relations
+  buyerConversations    Conversation[] @relation("BuyerConversations")
+  sellerConversations   Conversation[] @relation("SellerConversations")
+  sentMessages          Message[]      @relation("SentMessages")
 
   @@map("users")
 }
@@ -58,7 +63,46 @@ model Product {
   sellerId      String
   seller        User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
+  // Chat Relations
+  conversations Conversation[]
+
   @@map("products")
+}
+
+// ─── CONVERSATION ─────────────────────────────────────────────────────────────
+
+model Conversation {
+  id         String    @id @default(uuid())
+  productId  String
+  buyerId    String
+  sellerId   String
+  isClosed   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buyer      User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller     User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  messages   Message[]
+
+  @@unique([productId, buyerId])
+  @@map("conversations")
+}
+
+// ─── MESSAGE ─────────────────────────────────────────────────────────────────
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderId       String
+  content        String       @db.VarChar(1000)
+  read           Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }
 
 // ─── ENUMS ───────────────────────────────────────────────────────────────────

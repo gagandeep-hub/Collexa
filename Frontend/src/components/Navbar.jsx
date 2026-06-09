@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { chatAPI } from '../services/api';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -8,6 +9,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const dropdownRef = useRef(null);
 
     const handleLogout = () => {
@@ -26,6 +28,22 @@ const Navbar = () => {
         document.addEventListener('mousedown', handler);
         return () => document.removeEventListener('mousedown', handler);
     }, []);
+
+    // Poll unread message count every 30 seconds for authenticated users
+    useEffect(() => {
+        if (!isAuthenticated) { setUnreadCount(0); return; }
+
+        const fetchUnread = async () => {
+            try {
+                const res = await chatAPI.getUnreadCount();
+                setUnreadCount(res.data.unreadCount || 0);
+            } catch { /* silent */ }
+        };
+
+        fetchUnread();
+        const interval = setInterval(fetchUnread, 30000);
+        return () => clearInterval(interval);
+    }, [isAuthenticated]);
 
     return (
         <nav className="navbar">
@@ -50,6 +68,22 @@ const Navbar = () => {
                             </Link>
                             <Link to="/my-products" className="nav-link" onClick={() => setMenuOpen(false)}>
                                 My Listings
+                            </Link>
+                            <Link
+                                to="/inbox"
+                                className="nav-link nav-inbox-link"
+                                onClick={() => setMenuOpen(false)}
+                                title="Inbox"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="17" height="17">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
+                                Inbox
+                                {unreadCount > 0 && (
+                                    <span className="nav-unread-badge">
+                                        {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                )}
                             </Link>
 
                             {/* ─── User Avatar + Dropdown ───────────────────── */}

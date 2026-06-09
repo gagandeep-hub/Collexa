@@ -1,18 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
 require('dotenv').config();
 
 const connectDB = require('./config/db');
-const app = express();
+const initChatSocket = require('./socket/chatSocket');
+const { startCleanupJob } = require('./scripts/cleanupMessages');
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
+const app = express();
+const httpServer = http.createServer(app);
+
+// ─── CORS Origins ─────────────────────────────────────────────────────────────
+const allowedOrigins = [
+    'http://localhost:5173',               // local dev
+    'http://frontend:5173',                // Docker internal network
+    'https://collexa-frontend.onrender.com' // production
+];
+
+// ─── Express Middleware ────────────────────────────────────────────────────────
 app.use(cors({
-    origin: [
-        'http://localhost:5173',               // local dev
-        'http://frontend:5173',                // Docker internal network
-        'https://collexa-frontend.onrender.com' // production
-    ],
+    origin: allowedOrigins,
     credentials: true
 }));
 app.use(express.json());
@@ -20,6 +29,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded files (if any local uploads still used alongside Cloudinary)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// ─── Socket.io ────────────────────────────────────────────────────────────────
+const io = new Server(httpServer, {
+    cors: {
+        origin: allowedOrigins,
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
+});
+
+initChatSocket(io);
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
@@ -33,6 +53,7 @@ app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/profile', require('./routes/profile.routes'));
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
+app.use('/api/chat', require('./routes/chat.routes'));
 
 // ─── Error Handling Middleware ────────────────────────────────────────────────
 app.use((err, req, res, next) => {
@@ -75,8 +96,12 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
         console.log(`🚀 Server running on port ${PORT}`);
         console.log(`📍 http://localhost:${PORT}`);
+        console.log(`🔌 Socket.io ready`);
     });
+
+    // Start the daily message cleanup cron job
+    startCleanupJob();
 });

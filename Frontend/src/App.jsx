@@ -16,6 +16,7 @@ import Contact from './pages/Contact'
 import FAQs from './pages/FAQs'
 import Profile from './pages/Profile'
 import CompleteProfile from './pages/CompleteProfile'
+import Inbox from './pages/Inbox'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 import AdminLayout from './pages/admin/AdminLayout'
@@ -80,6 +81,9 @@ function App() {
                   } />
                   <Route path="/my-products" element={
                     <ProtectedRoute><MyProducts /></ProtectedRoute>
+                  } />
+                  <Route path="/inbox" element={
+                    <ProtectedRoute><Inbox /></ProtectedRoute>
                   } />
                 </Routes>
               </main>

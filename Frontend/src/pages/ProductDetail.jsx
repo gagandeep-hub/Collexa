@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import ChatPanel from '../components/ChatPanel';
 import './ProductDetail.css';
 
 const API_URL = 'https://collexa-backend-c7cu.onrender.com';
@@ -12,6 +13,7 @@ const ProductDetail = () => {
     const { user } = useAuth();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [chatOpen, setChatOpen] = useState(false);
 
     useEffect(() => {
         fetchProduct();
@@ -145,19 +147,48 @@ const ProductDetail = () => {
                                 Call Seller
                             </a>
                         )}
-                        {product.seller?.phone && (
-                            <a
-                                href={`https://wa.me/${product.seller.phone.replace(/[^0-9]/g, '')}?text=Hi, I'm interested in your ${product.title} on Collexa`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn-whatsapp"
+
+                        {/* Chat button — hidden for seller's own product */}
+                        {user && user.id !== product.sellerId && (
+                            <button
+                                className={`btn-chat ${
+                                    product.status === 'sold' || product.status === 'reserved'
+                                        ? 'btn-chat--disabled'
+                                        : ''
+                                }`}
+                                onClick={() => {
+                                    if (product.status !== 'sold' && product.status !== 'reserved') {
+                                        setChatOpen(true);
+                                    }
+                                }}
+                                disabled={product.status === 'sold' || product.status === 'reserved'}
+                                title={
+                                    product.status === 'sold' || product.status === 'reserved'
+                                        ? `Chat unavailable — item is ${product.status}`
+                                        : 'Chat with Seller'
+                                }
                             >
-                                WhatsApp Seller
-                            </a>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
+                                {product.status === 'sold' || product.status === 'reserved'
+                                    ? `Chat closed (${product.status})`
+                                    : 'Chat with Seller'
+                                }
+                            </button>
                         )}
                     </div>
                 </div>
             </div>
+
+            {/* Chat Panel */}
+            {user && user.id !== product.sellerId && (
+                <ChatPanel
+                    product={product}
+                    isOpen={chatOpen}
+                    onClose={() => setChatOpen(false)}
+                />
+            )}
         </div>
     );
 };
