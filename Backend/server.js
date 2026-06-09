@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const connectDB = require('./config/db');
 const initChatSocket = require('./socket/chatSocket');
-const { startCleanupJob } = require('./scripts/cleanupMessages');
+const { startCleanupJob } = require('./utils/cleanupMessages');
 
 const app = express();
 const httpServer = http.createServer(app);
