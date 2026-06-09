@@ -183,7 +183,7 @@ const Home = () => {
                     </div>
                     <div className="developer-info">
                         <h3>Gagandeep Kushwah</h3>
-                        <p className="developer-role">Full Stack Developer</p>
+                        <p className="developer-role"> Software Developer</p>
                         <p className="developer-bio">
                             Passionate about building solutions that make campus life easier.
                             Collexa was created to help students save money and reduce waste.
