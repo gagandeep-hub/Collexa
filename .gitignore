@@ -40,3 +40,5 @@ generated/
 # All node_modules and dist (recursive)
 **/node_modules
 **/dist
+
+docs

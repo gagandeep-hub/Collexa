@@ -60,6 +60,7 @@ const useChat = ({ productId = null, conversationId: initialConvId = null } = {}
 
         // Listen for new messages
         const handleNewMessage = (message) => {
+            if (message.conversationId !== conversationId) return;
             setMessages(prev => {
                 // Avoid duplicates
                 if (prev.some(m => m.id === message.id)) return prev;
@@ -81,6 +82,7 @@ const useChat = ({ productId = null, conversationId: initialConvId = null } = {}
         socketService.onTyping(handleTyping);
 
         return () => {
+            socketService.leaveConversation(conversationId);
             socketService.offMessage(handleNewMessage);
             socketService.offTyping(handleTyping);
             clearTimeout(typingTimerRef.current);

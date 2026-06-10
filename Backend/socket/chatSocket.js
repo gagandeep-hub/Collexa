@@ -139,6 +139,13 @@ const initChatSocket = (io) => {
             });
         });
 
+        // ── Leave a conversation room ─────────────────────────────────────────
+        socket.on('leave_conversation', ({ conversationId }) => {
+            const room = `conv_${conversationId}`;
+            socket.leave(room);
+            console.log(`📤 ${socket.user?.name} left room: ${room}`);
+        });
+
         // ── Disconnect ────────────────────────────────────────────────────────
         socket.on('disconnect', () => {
             console.log(`🔌 Socket disconnected: ${socket.user?.name} (${socket.id})`);

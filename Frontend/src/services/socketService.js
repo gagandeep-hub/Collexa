@@ -5,6 +5,7 @@ const SOCKET_URL = import.meta.env.VITE_API_URL
     : (import.meta.env.DEV ? 'http://localhost:5000' : 'https://collexa-backend-c7cu.onrender.com');
 
 let socket = null;
+let activeConversationId = null;
 
 /**
  * Connects to the Socket.io server with the user's JWT token.
@@ -25,6 +26,9 @@ const connect = () => {
 
     socket.on('connect', () => {
         console.log('🔌 Socket.io connected:', socket.id);
+        if (activeConversationId) {
+            socket.emit('join_conversation', { conversationId: activeConversationId });
+        }
     });
 
     socket.on('connect_error', (err) => {
@@ -45,6 +49,7 @@ const disconnect = () => {
     if (socket) {
         socket.disconnect();
         socket = null;
+        activeConversationId = null;
     }
 };
 
@@ -57,15 +62,27 @@ const getSocket = () => socket;
  * Joins a conversation room.
  */
 const joinConversation = (conversationId) => {
-    if (!socket?.connected) return;
+    activeConversationId = conversationId;
+    if (!socket) return;
     socket.emit('join_conversation', { conversationId });
+};
+
+/**
+ * Leaves a conversation room.
+ */
+const leaveConversation = (conversationId) => {
+    if (activeConversationId === conversationId) {
+        activeConversationId = null;
+    }
+    if (!socket) return;
+    socket.emit('leave_conversation', { conversationId });
 };
 
 /**
  * Sends a message to a conversation room.
  */
 const sendMessage = (conversationId, content) => {
-    if (!socket?.connected) return;
+    if (!socket) return;
     socket.emit('send_message', { conversationId, content });
 };
 
@@ -73,7 +90,7 @@ const sendMessage = (conversationId, content) => {
  * Emits a typing indicator.
  */
 const sendTyping = (conversationId, isTyping) => {
-    if (!socket?.connected) return;
+    if (!socket) return;
     socket.emit('typing', { conversationId, isTyping });
 };
 
@@ -114,6 +131,7 @@ const socketService = {
     disconnect,
     getSocket,
     joinConversation,
+    leaveConversation,
     sendMessage,
     sendTyping,
     onMessage,

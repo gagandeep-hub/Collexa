@@ -98,7 +98,7 @@ const Products = () => {
                     <select name="condition" value={filters.condition} onChange={handleFilterChange}>
                         <option value="">All Conditions</option>
                         <option value="new">New</option>
-                        <option value="like-new">Like New</option>
+                        <option value="like_new">Like New</option>
                         <option value="good">Good</option>
                         <option value="fair">Fair</option>
                         <option value="poor">Poor</option>
